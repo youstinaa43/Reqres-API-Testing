@@ -1,0 +1,1298 @@
+{
+	"info": {
+		"_postman_id": "b912366b-0585-41fd-bcd4-c0facc2c2088",
+		"name": "Reqres API Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34743306",
+		"_collection_link": "https://yos888.postman.co/workspace/Yos-Workspace~b8996570-677b-4c41-83d5-f610d55de3b2/collection/34743306-b912366b-0585-41fd-bcd4-c0facc2c2088?action=share&source=collection_link&creator=34743306"
+	},
+	"item": [
+		{
+			"name": "LIST USERS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that total pages is equal to 2\", function () {\r",
+							"    pm.expect(jsonData.total_pages).to.eql(2);\r",
+							"});\r",
+							"pm.test(\"Check that number of page is equal to 2\", function () {\r",
+							"    pm.expect(jsonData.page).to.eql(2);\r",
+							"});\r",
+							"pm.test(\"Check the data types\",function(){\r",
+							"    pm.expect(jsonData.page).to.be.a('number');\r",
+							"    pm.expect(jsonData.data[0].email).to.be.a('string');\r",
+							"});\r",
+							"pm.test(\"Check the data is not empty\",function(){\r",
+							"    pm.expect(jsonData.data.length).to.be.above(0);\r",
+							"    \r",
+							"});\r",
+							"pm.test(\"Check required fields in each user data\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user).to.have.property('id');\r",
+							"        pm.expect(user).to.have.property('email');\r",
+							"        pm.expect(user).to.have.property('first_name');\r",
+							"        pm.expect(user).to.have.property('last_name');\r",
+							"        pm.expect(user).to.have.property('avatar');\r",
+							"        });\r",
+							"});\r",
+							"pm.test(\"Check the correct format of email\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.email).to.match(/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"jsonData.data.forEach((user)=>{\r",
+							"    pm.sendRequest(user.avatar,function(err,res){\r",
+							"        pm.test(\"Check if avatar URL is reachable\",function(){\r",
+							"            pm.expect(res).to.have.property('status','OK');\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check support URL\", function () {\r",
+							"    pm.expect(jsonData.support.url).to.eql(\"https://reqres.in/#support-heading\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check support text\", function () {\r",
+							"    pm.expect(jsonData.support.text).to.eql(\"To keep ReqRes free, contributions towards server costs are appreciated!\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify pagination logic\",function(){\r",
+							"    let currentPage=jsonData.page;\r",
+							"    let totalPages=jsonData.total_pages;\r",
+							"    let perPage= jsonData.per_page;\r",
+							"    let totalUsers=jsonData.total;\r",
+							"    pm.expect(currentPage).to.be.at.least(1);\r",
+							"    pm.expect(currentPage).to.be.at.most(totalPages);\r",
+							"    pm.expect(jsonData.data.length).to.be.at.most(perPage);\r",
+							"    pm.expect(totalUsers).to.be.at.least(perPage)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check for unique email IDs\",function(){\r",
+							"    let emails=jsonData.data.map(user=>user.email);\r",
+							"    let uniqueEmails=[...new Set(emails)];\r",
+							"    pm.expect(emails.length).to.eql(uniqueEmails.length);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check all users have avatar URLS\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.avatar).to.include(\"https://reqres.in/img/faces\");\r",
+							"    });\r",
+							"});\r",
+							"pm.test(\"Check HTTP method is GET\",function(){\r",
+							"    pm.expect(pm.request.method).to.eql(\"GET\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate pagination consistency\",function(){\r",
+							"    let perPage=jsonData.per_page;\r",
+							"    let total=jsonData.total;\r",
+							"    let totalPages=Math.ceil(total/perPage);\r",
+							"    pm.expect(jsonData.total_pages).to.eql(totalPages);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify correct number of users per page\",function(){\r",
+							"    pm.expect(jsonData.data.length).to.eql(jsonData.per_page);\r",
+							"});\r",
+							"pm.test(\"Check for null fields in user data\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.id).to.not.be.null;\r",
+							"        pm.expect(user.email).to.not.be.null;\r",
+							"        pm.expect(user.first_name).to.not.be.null;\r",
+							"        pm.expect(user.last_name).to.not.be.null;\r",
+							"        pm.expect(user.avatar).to.not.be.null;\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/users?page=2",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SINGLE USER",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//tests for support \r",
+							"pm.test(\"Check support URL\", function () {\r",
+							"    pm.expect(jsonData.support.url).to.eql(\"https://reqres.in/#support-heading\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check support text\", function () {\r",
+							"    pm.expect(jsonData.support.text).to.eql(\"To keep ReqRes free, contributions towards server costs are appreciated!\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that required fields are present\",function(){\r",
+							"    pm.expect(jsonData.data).to.have.property('id');\r",
+							"    pm.expect(jsonData.data).to.have.property('email');\r",
+							"    pm.expect(jsonData.data).to.have.property('first_name');\r",
+							"    pm.expect(jsonData.data).to.have.property('last_name');\r",
+							"    pm.expect(jsonData.data).to.have.property('avatar');\r",
+							"    pm.expect(jsonData.support).to.have.property('url');\r",
+							"    pm.expect(jsonData.support).to.have.property('text');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check id is 2\",function(){\r",
+							"    pm.expect(jsonData.data.id).to.eql(2);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check for null fields in user data\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.data.id).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.email).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.first_name).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.last_name).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.avatar).to.not.be.null;    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if avatar URL is reachable\",function(){\r",
+							"    pm.sendRequest(jsonData.data.avatar,function(err,res){\r",
+							"        pm.expect(res).to.have.property('status','OK');     \r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check avatar URL format\",function(){\r",
+							"        pm.expect(jsonData.data.avatar).to.match(/^https:\\/\\/reqres.in\\/img\\/faces\\/\\d+-image\\.jpg$/);   \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check the correct format of email\",function(){\r",
+							"        pm.expect(jsonData.data.email).to.match(/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/);\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check data field types\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.data.id).to.be.a('number');\r",
+							"        pm.expect(jsonData.data.email).to.be.a('string');\r",
+							"        pm.expect(jsonData.data.first_name).to.be.a('string');\r",
+							"        pm.expect(jsonData.data.last_name).to.be.a('string');\r",
+							"        pm.expect(jsonData.data.avatar).to.be.a('string');    \r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/users/2",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SINGLE USER NOT FOUND",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"pm.test(\"Check the data is null\",function(){\r",
+							"    pm.expect(jsonData).to.eql({});\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that response body is not null\",function(){\r",
+							"    pm.expect(pm.response.json()).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check no additional data fields are present\",function(){\r",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(0);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/users/23",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users",
+						"23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LIST <RESOURCE>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that total pages is equal to 2\", function () {\r",
+							"    pm.expect(jsonData.total_pages).to.eql(2);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields in each user data\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user).to.have.property('id');\r",
+							"        pm.expect(user).to.have.property('name');\r",
+							"        pm.expect(user).to.have.property('year');\r",
+							"        pm.expect(user).to.have.property('color');\r",
+							"        pm.expect(user).to.have.property('pantone_value');\r",
+							"        });\r",
+							"});\r",
+							"pm.test(\"Check for null fields in user data\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.id).to.not.be.null;\r",
+							"        pm.expect(user.name).to.not.be.null;\r",
+							"        pm.expect(user.year).to.not.be.null;\r",
+							"        pm.expect(user.color).to.not.be.null;\r",
+							"        pm.expect(user.pantone_value).to.not.be.null;\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check the type of data\",function(){\r",
+							"    pm.expect(jsonData.data).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check the data field types\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.id).to.be.a('number');\r",
+							"        pm.expect(user.name).to.be.a('string');\r",
+							"        pm.expect(user.year).to.be.a('number');\r",
+							"        pm.expect(user.color).to.be.a('string');\r",
+							"        pm.expect(user.pantone_value).to.be.a('string');\r",
+							"    });   \r",
+							"});\r",
+							"pm.test(\"Check the data is not empty\",function(){\r",
+							"    pm.expect(jsonData.data.length).to.be.above(0);\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Check support URL\", function () {\r",
+							"    pm.expect(jsonData.support.url).to.eql(\"https://reqres.in/#support-heading\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check support text\", function () {\r",
+							"    pm.expect(jsonData.support.text).to.eql(\"To keep ReqRes free, contributions towards server costs are appreciated!\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify pagination logic\",function(){\r",
+							"    let currentPage=jsonData.page;\r",
+							"    let totalPages=jsonData.total_pages;\r",
+							"    let perPage= jsonData.per_page;\r",
+							"    let totalUsers=jsonData.total;\r",
+							"    pm.expect(currentPage).to.be.at.least(1);\r",
+							"    pm.expect(currentPage).to.be.at.most(totalPages);\r",
+							"    pm.expect(jsonData.data.length).to.be.at.most(perPage);\r",
+							"    pm.expect(totalUsers).to.be.at.least(perPage)\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Check HTTP method is GET\",function(){\r",
+							"    pm.expect(pm.request.method).to.eql(\"GET\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate pagination consistency\",function(){\r",
+							"    let perPage=jsonData.per_page;\r",
+							"    let total=jsonData.total;\r",
+							"    let totalPages=Math.ceil(total/perPage);\r",
+							"    pm.expect(jsonData.total_pages).to.eql(totalPages);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify correct number of users per page\",function(){\r",
+							"    pm.expect(jsonData.data.length).to.eql(jsonData.per_page);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check for unique IDs\",function(){\r",
+							"    let ids=jsonData.data.map(user=>user.id);\r",
+							"    let uniquIds=[...new Set(ids)];\r",
+							"    pm.expect(ids.length).to.eql(uniquIds.length);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check color format\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.color).to.match(/^#[0-9A-Fa-f]{6}$/);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check for unique pantone values\",function(){\r",
+							"    let pantoneValues=jsonData.data.map(user=>user.pantone_value);\r",
+							"    let uniquPantoneValues=[...new Set(pantoneValues)];\r",
+							"    pm.expect(pantoneValues.length).to.eql(uniquPantoneValues.length);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check per page value is 6\",function(){\r",
+							"    pm.expect(jsonData.per_page).to.eql(6);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check total items are 12\",function(){\r",
+							"    pm.expect(jsonData.total).to.eql(12);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/unknown",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"unknown"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SINGLE <RESOURCE>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//tests for support \r",
+							"pm.test(\"Check support URL\", function () {\r",
+							"    pm.expect(jsonData.support.url).to.eql(\"https://reqres.in/#support-heading\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check support text\", function () {\r",
+							"    pm.expect(jsonData.support.text).to.eql(\"To keep ReqRes free, contributions towards server costs are appreciated!\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that required fields are present\",function(){\r",
+							"    pm.expect(jsonData.data).to.have.property('id');\r",
+							"    pm.expect(jsonData.data).to.have.property('name');\r",
+							"    pm.expect(jsonData.data).to.have.property('year');\r",
+							"    pm.expect(jsonData.data).to.have.property('color');\r",
+							"    pm.expect(jsonData.data).to.have.property('pantone_value');\r",
+							"    pm.expect(jsonData.support).to.have.property('url');\r",
+							"    pm.expect(jsonData.support).to.have.property('text');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check id is 2\",function(){\r",
+							"    pm.expect(jsonData.data.id).to.eql(2);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check for null fields in user data\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.data.id).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.name).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.year).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.color).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.pantone_value).to.not.be.null;    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check data field types\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.data.id).to.be.a('number');\r",
+							"        pm.expect(jsonData.data.name).to.be.a('string');\r",
+							"        pm.expect(jsonData.data.year).to.be.a('number');\r",
+							"        pm.expect(jsonData.data.color).to.be.a('string');\r",
+							"        pm.expect(jsonData.data.pantone_value).to.be.a('string');    \r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/unknown/2",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"unknown",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SINGLE <RESOURCE> NOT FOUND",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"pm.test(\"Check the data is null\",function(){\r",
+							"    pm.expect(jsonData).to.eql({});\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that response body is not null\",function(){\r",
+							"    pm.expect(pm.response.json()).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check no additional data fields are present\",function(){\r",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/unknown/23",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"unknown",
+						"23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var requestData=pm.request.body.raw? JSON.parse(pm.request.body.raw):{};\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields in user data\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData).to.have.property('name');\r",
+							"        pm.expect(jsonData).to.have.property('job');\r",
+							"        pm.expect(jsonData).to.have.property('id');\r",
+							"        pm.expect(jsonData).to.have.property('createdAt');\r",
+							"});  \r",
+							"\r",
+							"pm.test(\"Check the data field types\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.id).to.be.a('string');\r",
+							"        pm.expect(jsonData.name).to.be.a('string');\r",
+							"        pm.expect(jsonData.job).to.be.a('string');\r",
+							"        pm.expect(jsonData.createdAt).to.be.a('string');  \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"createdAt is in ISO 8601 format\", function () {\r",
+							"    var iso8601Regex = /\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z/;\r",
+							"    pm.expect(jsonData.createdAt).to.match(iso8601Regex);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check Name in request matchs the response\",function(){\r",
+							"    pm.expect(jsonData.name).to.eql(requestData.name);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check Job in request matchs the response\",function(){\r",
+							"    pm.expect(jsonData.job).to.eql(requestData.job);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check createdAt in response matches the time in computer\",function(){\r",
+							"    var createdAtTime=new Date(jsonData.createdAt);\r",
+							"    var currentTime= new Date();\r",
+							"    var timeDifference=Math.abs(currentTime-createdAtTime)/1000;\r",
+							"    pm.expect(timeDifference).to.be.below(5);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"morpheus\",\r\n    \"job\": \"leader\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/users",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var requestData=pm.request.body.raw? JSON.parse(pm.request.body.raw):{};\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields in  user data\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData).to.have.property('name');\r",
+							"        pm.expect(jsonData).to.have.property('job');\r",
+							"        pm.expect(jsonData).to.have.property('updatedAt');\r",
+							"});  \r",
+							"\r",
+							"pm.test(\"Check the data field types\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.name).to.be.a('string');\r",
+							"        pm.expect(jsonData.job).to.be.a('string');\r",
+							"        pm.expect(jsonData.updatedAt).to.be.a('string');  \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"updatedAt is in ISO 8601 format\", function () {\r",
+							"    var iso8601Regex = /\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z/;\r",
+							"    pm.expect(jsonData.updatedAt).to.match(iso8601Regex);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check Name in request matchs the response\",function(){\r",
+							"    pm.expect(jsonData.name).to.eql(requestData.name);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check Job in request matchs the response\",function(){\r",
+							"    pm.expect(jsonData.job).to.eql(requestData.job);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check updatedAt in response matches the time in computer\",function(){\r",
+							"    var updatedAtTime=new Date(jsonData.updatedAt);\r",
+							"    var currentTime= new Date();\r",
+							"    var timeDifference=Math.abs(currentTime-updatedAtTime)/1000;\r",
+							"    pm.expect(timeDifference).to.be.below(5);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"morpheus\",\r\n    \"job\": \"zion resident\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/users/2",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var requestData=pm.request.body.raw? JSON.parse(pm.request.body.raw):{};\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields in  user data\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData).to.have.property('name');\r",
+							"        pm.expect(jsonData).to.have.property('job');\r",
+							"        pm.expect(jsonData).to.have.property('updatedAt');\r",
+							"});  \r",
+							"\r",
+							"pm.test(\"Check the data field types\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.name).to.be.a('string');\r",
+							"        pm.expect(jsonData.job).to.be.a('string');\r",
+							"        pm.expect(jsonData.updatedAt).to.be.a('string');  \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"updatedAt is in ISO 8601 format\", function () {\r",
+							"    var iso8601Regex = /\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z/;\r",
+							"    pm.expect(jsonData.updatedAt).to.match(iso8601Regex);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check Name in request matchs the response\",function(){\r",
+							"    pm.expect(jsonData.name).to.eql(requestData.name);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check Job in request matchs the response\",function(){\r",
+							"    pm.expect(jsonData.job).to.eql(requestData.job);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check updatedAt in response matches the time in computer\",function(){\r",
+							"    var updatedAtTime=new Date(jsonData.updatedAt);\r",
+							"    var currentTime= new Date();\r",
+							"    var timeDifference=Math.abs(currentTime-updatedAtTime)/1000;\r",
+							"    pm.expect(timeDifference).to.be.below(5);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"morpheus\",\r\n    \"job\": \"zion resident\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/users/2",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData;\r",
+							"try{\r",
+							"jsonData= pm.response.json();\r",
+							"} catch(e){\r",
+							"    jsonData={};\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check response body is empty\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData).to.be.empty;\r",
+							"        \r",
+							"});  \r",
+							"\r",
+							"pm.test(\"Check response headers\",function(){\r",
+							"    pm.response.to.have.header(\"Content-length\",\"0\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/users/2",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REGISTER - SUCCESSFUL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var requestData=pm.request.body.raw? JSON.parse(pm.request.body.raw):{};\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields of data in response\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData).to.have.property('id');\r",
+							"        pm.expect(jsonData).to.have.property('token');\r",
+							"});  \r",
+							"\r",
+							"pm.test(\"Check the data field types in response\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.id).to.be.a('number');\r",
+							"        pm.expect(jsonData.token).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields of data in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData).to.have.property('email');\r",
+							"        pm.expect(requestData).to.have.property('password');\r",
+							"}); \r",
+							"\r",
+							"pm.test(\"Check the data field types in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData.email).to.be.a('string');\r",
+							"        pm.expect(requestData.password).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check the correct format of email\",function(){\r",
+							"        pm.expect(requestData.email).to.match(/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/);   \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"pistol\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/register",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REGISTER - UNSUCCESSFUL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var requestData=pm.request.body.raw? JSON.parse(pm.request.body.raw):{};\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields of data in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData).to.have.property('email');\r",
+							"}); \r",
+							"\r",
+							"pm.test(\"Check the data field types in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData.email).to.be.a('string');\r",
+							"});\r",
+							"pm.test(\"Check error message in response\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.error).to.eql('Missing password');\r",
+							"});\r",
+							"pm.test(\"Check the correct format of email\",function(){\r",
+							"        pm.expect(requestData.email).to.match(/^[\\w-]+@([\\w-])+[\\w-]{2,2}$/);   \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"sydney@fife\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/register",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LOGIN - SUCCESSFUL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var requestData=pm.request.body.raw? JSON.parse(pm.request.body.raw):{};\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields of data in response\",function(){\r",
+							"        pm.expect(jsonData).to.have.property('token');\r",
+							"});  \r",
+							"\r",
+							"pm.test(\"Check the data field types in response\",function(){\r",
+							"        pm.expect(jsonData.token).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields of data in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData).to.have.property('email');\r",
+							"        pm.expect(requestData).to.have.property('password');\r",
+							"}); \r",
+							"\r",
+							"pm.test(\"Check the data field types in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData.email).to.be.a('string');\r",
+							"        pm.expect(requestData.password).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check the correct format of email\",function(){\r",
+							"        pm.expect(requestData.email).to.match(/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/);   \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"cityslicka\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/login",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LOGIN- UNSUCCESSFUL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var requestData=pm.request.body.raw? JSON.parse(pm.request.body.raw):{};\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check content-type is application/json\",function(){\r",
+							"    pm.response.to.have.header(\"Content-Type\",\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check required fields of data in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData).to.have.property('email');\r",
+							"}); \r",
+							"\r",
+							"pm.test(\"Check the data field types in request\",function(){\r",
+							"    \r",
+							"        pm.expect(requestData.email).to.be.a('string');\r",
+							"});\r",
+							"pm.test(\"Check error message in response\",function(){\r",
+							"    \r",
+							"        pm.expect(jsonData.error).to.eql('Missing password');\r",
+							"});\r",
+							"pm.test(\"Check the correct format of email\",function(){\r",
+							"        pm.expect(requestData.email).to.match(/^[\\w-]+@([\\w-])+[\\w-]{2,2}$/);   \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"peter@klaven\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/login",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELAYED RESPONSE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Check the response time is less than 3500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(3500);\r",
+							"});\r",
+							"pm.test(\"Check status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that total pages is equal to 2\", function () {\r",
+							"    pm.expect(jsonData.total_pages).to.eql(2);\r",
+							"});\r",
+							"pm.test(\"Check that number of page is equal to 1\", function () {\r",
+							"    pm.expect(jsonData.page).to.eql(1);\r",
+							"});\r",
+							"pm.test(\"Check the data types\",function(){\r",
+							"    pm.expect(jsonData.page).to.be.a('number');\r",
+							"    pm.expect(jsonData.data[0].email).to.be.a('string');\r",
+							"});\r",
+							"pm.test(\"Check the data is not empty\",function(){\r",
+							"    pm.expect(jsonData.data.length).to.be.above(0);\r",
+							"    \r",
+							"});\r",
+							"pm.test(\"Check required fields in each user data\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user).to.have.property('id');\r",
+							"        pm.expect(user).to.have.property('email');\r",
+							"        pm.expect(user).to.have.property('first_name');\r",
+							"        pm.expect(user).to.have.property('last_name');\r",
+							"        pm.expect(user).to.have.property('avatar');\r",
+							"        });\r",
+							"});\r",
+							"pm.test(\"Check the correct format of email\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.email).to.match(/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"jsonData.data.forEach((user)=>{\r",
+							"    pm.sendRequest(user.avatar,function(err,res){\r",
+							"        pm.test(\"Check if avatar URL is reachable\",function(){\r",
+							"            pm.expect(res).to.have.property('status','OK');\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check support URL\", function () {\r",
+							"    pm.expect(jsonData.support.url).to.eql(\"https://reqres.in/#support-heading\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check support text\", function () {\r",
+							"    pm.expect(jsonData.support.text).to.eql(\"To keep ReqRes free, contributions towards server costs are appreciated!\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify pagination logic\",function(){\r",
+							"    let currentPage=jsonData.page;\r",
+							"    let totalPages=jsonData.total_pages;\r",
+							"    let perPage= jsonData.per_page;\r",
+							"    let totalUsers=jsonData.total;\r",
+							"    pm.expect(currentPage).to.be.at.least(1);\r",
+							"    pm.expect(currentPage).to.be.at.most(totalPages);\r",
+							"    pm.expect(jsonData.data.length).to.be.at.most(perPage);\r",
+							"    pm.expect(totalUsers).to.be.at.least(perPage)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check for unique email IDs\",function(){\r",
+							"    let emails=jsonData.data.map(user=>user.email);\r",
+							"    let uniqueEmails=[...new Set(emails)];\r",
+							"    pm.expect(emails.length).to.eql(uniqueEmails.length);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check all users have avatar URLS\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.avatar).to.include(\"https://reqres.in/img/faces\");\r",
+							"    });\r",
+							"});\r",
+							"pm.test(\"Check HTTP method is GET\",function(){\r",
+							"    pm.expect(pm.request.method).to.eql(\"GET\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate pagination consistency\",function(){\r",
+							"    let perPage=jsonData.per_page;\r",
+							"    let total=jsonData.total;\r",
+							"    let totalPages=Math.ceil(total/perPage);\r",
+							"    pm.expect(jsonData.total_pages).to.eql(totalPages);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify correct number of users per page\",function(){\r",
+							"    pm.expect(jsonData.data.length).to.eql(jsonData.per_page);\r",
+							"});\r",
+							"pm.test(\"Check for null fields in user data\",function(){\r",
+							"    jsonData.data.forEach((user)=>{\r",
+							"        pm.expect(user.id).to.not.be.null;\r",
+							"        pm.expect(user.email).to.not.be.null;\r",
+							"        pm.expect(user.first_name).to.not.be.null;\r",
+							"        pm.expect(user.last_name).to.not.be.null;\r",
+							"        pm.expect(user.avatar).to.not.be.null;\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}api/users?delay=3",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "delay",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
