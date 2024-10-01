@@ -3,6 +3,8 @@ Performed API testing on Reqres mock API using Postman.
 Tested multiple HTTP methods (GET, POST, PUT, DELETE) and implemented automated validation of responses using Postman scripts.
 This is the website https://reqres.in/
 ==================================>
+
+
 1-LIST USERS 
 endpoint==> /api/users?page=2  Response=200 Method=>GET
 Test cases:
