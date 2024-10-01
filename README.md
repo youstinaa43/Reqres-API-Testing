@@ -9,8 +9,11 @@ This is the website https://reqres.in/
 endpoint==> /api/users?page=2  Response=200 Method=>GET
 Test cases:
 a-Checking response time is less than 500ms(Ensure the API responds within an acceptable time frame.)
+
 b-Check status code is 200
+
 c-Check that the total pages is equal to 2
+
 d-Check Data Types(Validate that specific fields in the response have the correct data types.)
 e-Check if Data Array is Not Empty(Confirm that the data array is not empty and contains user records.)
 f-Check Specific Fields in the Response (Validate the expected fields in each user object (e.g.,id, email, first_name, last_name).)
