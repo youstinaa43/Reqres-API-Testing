@@ -10,16 +10,16 @@ endpoint==> /api/users?page=2  Response=200 Method=>GET
 Test cases:
 a-Checking response time is less than 500ms(Ensure the API responds within an acceptable time frame.)
 b-Check status code is 200
-c-Check that total pages is equal to 2
+c-Check that the total pages is equal to 2
 d-Check Data Types(Validate that specific fields in the response have the correct data types.)
 e-Check if Data Array is Not Empty(Confirm that the data array is not empty and contains user records.)
-f-Check Specific Fields in the Response (Validate the presence of expected fields in each user object (e.g.,id, email, first_name, last_name).)
+f-Check Specific Fields in the Response (Validate the expected fields in each user object (e.g.,id, email, first_name, last_name).)
 g-Validate Email Format(Check if each user's email is in the correct format.)
-h-Verify the Avatar URL is Reachable(Ensure the avatar URLs are valid and return a OK response.)
+h-Verify the Avatar URL is Reachable(Ensure the avatar URLs are valid and return an OK response.)
 i-Check the Support Text and URL(Validate that the support section contains the correct URL and text.)
-j-Verify Pagination Logic(Validate that the page number is correct and that it matches the total_pages logic.)
+j-Verify Pagination Logic(Validate that the page number is correct and matches the total_pages logic.)
 k-Check Unique Email IDs(Ensure all users in the data array have unique email IDs (helps to ensure data integrity).)
-l- Check if All Users Have Avatars(Confirm that each user has a valid avatar URL.)
+l- Check if All Users Have Avatars(Confirm each user has a valid avatar URL.)
 m-Test for the Correct HTTP Method(Verify that the correct HTTP method is used for the request (in this case, it should be a GET request).)
 n-Validate Pagination Fields(Ensure that page, per_page, total, and total_pages fields are consistent and correctly calculated.)
 o-Verify Length of data Array(Check if the number of users returned in the data array matches the per_page value.)
