@@ -9,11 +9,8 @@ This is the website https://reqres.in/
 endpoint==> /api/users?page=2  Response=200 Method=>GET
 Test cases:
 a-Checking response time is less than 500ms(Ensure the API responds within an acceptable time frame.)
-
 b-Check status code is 200
-
 c-Check that the total pages is equal to 2
-
 d-Check Data Types(Validate that specific fields in the response have the correct data types.)
 e-Check if Data Array is Not Empty(Confirm that the data array is not empty and contains user records.)
 f-Check Specific Fields in the Response (Validate the expected fields in each user object (e.g.,id, email, first_name, last_name).)
@@ -28,9 +25,13 @@ n-Validate Pagination Fields(Ensure that page, per_page, total, and total_pages 
 o-Verify Length of data Array(Check if the number of users returned in the data array matches the per_page value.)
 p-Check for Missing or Null Fields(Ensure there are no null or missing values for critical fields such as id, email, first_name, last_name, and avatar.)
 q-Check that number of page is equal to 2
+
 ========================================================================================================================================================
+
 2-SINGLE USER 
+
 endpoint==> /api/users/2  Response=200   Method=>GET
+
 Test cases:
 a-Checking response time is less than 500ms(Ensure the API responds within an acceptable time frame.)
 b-Check status code is 200
@@ -42,6 +43,7 @@ g-Check for Null or Empty Fields(Ensure that none of the important fields in the
 h-Check Avatar URL Format(Confirm that the avatar field contains a valid URL.)
 i-Validate Email Format(Ensure the email field has a valid format.)
 j-Check Field Data Types(Verify that the data fields have the correct types.)
+
 ========================================================================================================================================================
 3-SINGLE USER NOT FOUND
 endpoint==> /api/users/23  Response=404   Method=>GET
@@ -52,6 +54,7 @@ c-Check Response Body is Empty(Ensure the response body is an empty object ({}))
 d-Check Content-Type Header(Ensure the response is in JSON format by validating the Content-Type header.)
 e-Check Response Body is Not Null(Even though the body is empty, it should not be null. You can check that it returns an empty object instead of null or something else.)
 f-Check no additional data fields are present.
+
 ========================================================================================================================================================
 4-List <resource>
 endpoint==> /api/unknown  Response=200   Method=>GET
@@ -76,6 +79,7 @@ q-Check Content-Type Header(Validate that the Content-Type header is set to appl
 r-Ensure No Duplicate Pantone Values(Ensure that the pantone_value is unique across all items in the data array.)
 s-Check Per Page Value(Ensure that the number of items per page is 6.)
 t-Check Total Items(Validate that the total number of items is 12.)
+
 ========================================================================================================================================================
 5-SINGLE <RESOURCE> 
 endpoint==> /api/unknown/2  Response=200   Method=>GET
@@ -88,6 +92,7 @@ e-Check Specific Fields Exist(Confirm that the required fields exist in both the
 f- Check if ID Matches the Expected Value(If you expect a specific id value, you can test that it matches.)
 g-Check for Null or Empty Fields(Ensure that none of the important fields in the data object are null or empty.)
 h-Check Field Data Types(Verify that the data fields have the correct types.)
+
 ========================================================================================================================================================
 6-SINGLE <RESOURCE> NOT FOUND
 endpoint==> /api/unknown/23  Response=404   Method=>GET
@@ -98,6 +103,7 @@ c-Check Response Body is Empty(Ensure the response body is an empty object ({}))
 d-Check Content-Type Header(Ensure the response is in JSON format by validating the Content-Type header.)
 e-Check Response Body is Not Null(Even though the body is empty, it should not be null. You can check that it returns an empty object instead of null or something else.)
 f-Check no additional data fields are present
+
 ========================================================================================================================================================
 7-CREATE
 endpoint==> /api/users  Response=201   Method=>POST
@@ -111,6 +117,7 @@ f-Validate that the createdAt field is in ISO 8601 format
 g-Check Name in request matchs the response
 h-Check Job in request matchs the response
 i-Check createdAt in response matches the time in computer
+
 =======================================================================================================================================================
 8-UPDATE
 endpoint==> /api/users/2  Response=200   Method=>PUT
@@ -124,6 +131,7 @@ f-Validate that the createdAt field is in ISO 8601 format
 g-Check Name in request matchs the response
 h-Check Job in request matchs the response
 i-Check createdAt in response matches the time in computer
+
 =======================================================================================================================================================
 9-UPDATE
 endpoint==> /api/users/2  Response=200   Method=>PATCH
@@ -137,6 +145,7 @@ f-Validate that the createdAt field is in ISO 8601 format
 g-Check Name in request matchs the response
 h-Check Job in request matchs the response
 i-Check createdAt in response matches the time in computer
+
 =======================================================================================================================================================
 10-DELETE
 endpoint==> /api/users/2  Response=204   Method=>DELETE
@@ -145,6 +154,7 @@ a-Checking response time is less than 500ms(Ensure the API responds within an ac
 b-Check status code is 200
 c- Verify that the response body empty.
 d-Check Content-Length Header(Ensure the response is 0 by validating the Content-Length header.)
+
 =======================================================================================================================================================
 11-REGISTER-SUCCESSFUL
 endpoint==> /api/register  Response=200   Method=>POST
@@ -157,6 +167,7 @@ e-Check Content-Type Header(Ensure the response is in JSON format by validating 
 f-Check required fields of data in request (email,password)
 g-Check the data field types in request
 h-Check the correct format of email
+
 ========================================================================================================================
 12-REGISTER-UNSUCCESSFUL
 endpoint==> /api/register  Response=400   Method=>POST
@@ -168,6 +179,7 @@ d-Check Content-Type Header(Ensure the response is in JSON format by validating 
 e-Check required fields of data in request (email)
 f-Check the data field types in request
 g-Check the correct format of email
+
 ========================================================================================================================
 13-LOGIN-SUCCESSFUL
 endpoint==> /api/login  Response=200   Method=>POST
@@ -180,6 +192,7 @@ e-Check Content-Type Header(Ensure the response is in JSON format by validating 
 f-Check required fields of data in request (email,password)
 g-Check the data field types in request
 h-Check the correct format of email
+
 ========================================================================================================================
 14-LOGIN-UNSUCCESSFUL
 endpoint==> /api/login  Response=400   Method=>POST
@@ -191,6 +204,7 @@ d-Check Content-Type Header(Ensure the response is in JSON format by validating 
 e-Check required fields of data in request (email)
 f-Check the data field types in request
 g-Check the correct format of email
+
 ========================================================================================================================
 15-DELAYED RESPONSE
 endpoint==> /api/users?delay=3  Response=200 Method=>GET
@@ -212,6 +226,7 @@ n-Validate Pagination Fields(Ensure that page, per_page, total, and total_pages 
 o-Verify Length of data Array(Check if the number of users returned in the data array matches the per_page value.)
 p-Check for Missing or Null Fields(Ensure there are no null or missing values for critical fields such as id, email, first_name, last_name, and avatar.)
 q-Check that number of page is equal to 1
+
 ========================================================================================================================================================
 
 using newman run the collection 
